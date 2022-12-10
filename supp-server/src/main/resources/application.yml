@@ -11,6 +11,11 @@ spring:
         store-type: jdbc
         jdbc:
             initialize-schema: always
+session:
+    datasource:
+        url: jdbc:sqlite:session.db
+        username: sanko
+        password: sanko
 
 mybatis:
     mapper-locations: classpath:mapper/*.xml
