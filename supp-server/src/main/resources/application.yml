@@ -7,6 +7,10 @@ spring:
         username: sanko
         password: sanko
         driver-class-name: org.sqlite.JDBC
+    session:
+        store-type: jdbc
+        jdbc:
+            initialize-schema: always
 
 mybatis:
     mapper-locations: classpath:mapper/*.xml
