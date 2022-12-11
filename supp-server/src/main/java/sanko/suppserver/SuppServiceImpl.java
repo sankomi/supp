@@ -9,7 +9,6 @@ public class SuppServiceImpl implements SuppService {
 	
 	public SuppServiceImpl(SuppDao suppDao) {
 		this.suppDao = suppDao;
-		suppDao.init();
 	}
 	
 	@Override
