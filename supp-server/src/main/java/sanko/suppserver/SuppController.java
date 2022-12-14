@@ -36,14 +36,20 @@ public class SuppController {
 	) {
         return new SomeObject(id, number, integer);
     }
+	
+	@PostMapping("/create")
+	public String createLogin(@RequestBody Map<String, Object> user) {
+		suppService.createLogin((String) user.get("username"), (String) user.get("password"));
+		
+		return "";
+	}
 
 	@PostMapping("/login")
 	public Map<String, Object> login(@RequestBody Map<String, Object> user) {
+		boolean login = suppService.checkLogin((String) user.get("username"), (String) user.get("password"));
+		
 		Map<String, Object> map = new HashMap<>();
-		map.put("result", "test");
-		map.put("login", true);
-		map.put("username", user.get("username");
-		map.put("randomNumber", Math.random());
+		map.put("result", login? "success": "fail");
 		return map;
 	}
 

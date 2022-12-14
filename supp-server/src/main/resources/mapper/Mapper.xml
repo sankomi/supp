@@ -4,5 +4,12 @@
 	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="sanko.suppserver.SuppDao">
+	<insert id="createLogin">
+		INSERT INTO logins (username, password) 
+		VALUES (#{username}, #{password})
+	</insert>
 	
+	<select id="getPassword" resultType="string">
+		SELECT password FROM logins WHERE username = #{username} LIMIT 1
+	</select>
 </mapper>
