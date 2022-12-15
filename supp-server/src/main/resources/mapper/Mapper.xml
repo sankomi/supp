@@ -9,6 +9,10 @@
 		VALUES (#{username}, #{password})
 	</insert>
 	
+	<select id="getUserId" resultType="int">
+		SELECT id FROM logins WHERE username = #{username} LIMIT 1
+	</select>
+	
 	<select id="getPassword" resultType="string">
 		SELECT password FROM logins WHERE username = #{username} LIMIT 1
 	</select>
