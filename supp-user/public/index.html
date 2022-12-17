@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="robots" content="noindex">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>supp user</title>
+		<link rel="stylesheet" href="/css/style.css">
+	</head>
+	<body>
+		<div id="app" style="display: none;">
+			<h1>supp user</h1>
+			<p>hello, <span id="welcome"></span>!</p>
+			<p>
+				<button id="logout">logout</button>
+			</p>
+		</div>
+		<script src="/js/login.js"></script>
+		<script>
+			{
+				window.addEventListener("login", onLogin);
+				async function onLogin(event) {
+					window.removeEventListener("login", onLogin);
+					if (!event.detail) {
+						window.location.href = "/login/";
+						return;
+					}
+					
+					document.querySelector("#welcome").textContent = username;
+					
+					document.querySelector("#logout").addEventListener("click", async event => {
+						let res = await fetch(
+							"http://localhost:3000/logout",
+							{
+								credentials: "include",
+								method: "DELETE",
+								headers: {
+									"Accept": "application/json",
+									"Content-Type": "application/json",
+								},
+							}
+						);
+						let json = await res.json();
+						if (json.result === "success") window.location.href = "/login/";
+					});
+					
+					window.dispatchEvent(new Event("show"));
+				}
+			}
+		</script>
+	</body>
+</html>

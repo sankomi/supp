@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="robots" content="noindex">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>login - supp user</title>
+		<link rel="stylesheet" href="/css/style.css">
+	</head>
+	<body>
+		<div id="app" style="display: none;">
+			<h1>login</h1>
+			<form id="login">
+				<p>
+					<label for="username">username</label>
+					<input type="text" id="username" name="username">
+				</p>
+				<p>
+					<label for="password">password</label>
+					<input type="password" id="password" name="password">
+				</p>
+				<p>
+					<input type="submit" value="login">
+				</p>
+			</form>
+			<p>or <a href="/create/">create user</a></p>
+		</div>
+		<script src="/js/login.js"></script>
+		<script>
+			{
+				window.addEventListener("login", onLogin);
+				async function onLogin(event) {
+					window.removeEventListener("login", onLogin);
+					if (event.detail) {
+						window.location.href = "/";
+						return;
+					}
+					
+					document.querySelector("#login").addEventListener("submit", async event => {
+						event.preventDefault();
+						let res = await fetch(
+							"http://localhost:3000/login",
+							{
+								credentials: "include",
+								method: "POST",
+								headers: {
+									"Accept": "application/json",
+									"Content-Type": "application/json",
+								},
+								body: JSON.stringify({
+									username: document.querySelector("#username").value,
+									password: document.querySelector("#password").value,
+								}),
+							}
+						);
+						let json = await res.json();
+						if (json.result === "success") window.location.href = "/";
+						else alert(json.message);
+					});
+					
+					window.dispatchEvent(new Event("show"));
+				}
+			}
+		</script>
+	</body>
+</html>

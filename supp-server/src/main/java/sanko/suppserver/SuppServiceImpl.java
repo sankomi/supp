@@ -19,11 +19,12 @@ public class SuppServiceImpl implements SuppService {
 	}
 	
 	@Override
-	public String createLogin(Map<String, Object> user) {
+	public String createLogin(Map<String, Object> user, HttpServletRequest request) {
 		String username = (String) user.get("username");
 		String password = (String) user.get("password");
 		
-		if (username == null || password == null) return "{\"result\": \"fail\", \"message\": \"no username and/or password\"}";
+		if (username == null || username.isEmpty()) return "{\"result\": \"fail\", \"message\": \"no username and/or password\"}";
+		if (password == null || password.isEmpty()) return "{\"result\": \"fail\", \"message\": \"no username and/or password\"}";
 		
 		Integer userId = suppDao.getUserId(username);
 		
@@ -32,6 +33,8 @@ public class SuppServiceImpl implements SuppService {
 		Pbkdf2PasswordEncoder encoder = new Pbkdf2PasswordEncoder("muchsecret", 1000, 256);
 		String encodedPassword = encoder.encode(password);
 		suppDao.createLogin(username, encodedPassword);
+		
+		request.getSession().setAttribute("login", username);
 		return "{\"result\": \"success\"}";
 	}
 	
@@ -42,19 +45,25 @@ public class SuppServiceImpl implements SuppService {
 		String username = (String) user.get("username");
 		String password = (String) user.get("password");
 		
-		if (username == null || password == null) return "{\"result\": \"fail\", \"message\": \"no username and/or password\"}";
+		if (username == null || username.isEmpty()) return "{\"result\": \"fail\", \"message\": \"no username and/or password\"}";
+		if (password == null || password.isEmpty()) return "{\"result\": \"fail\", \"message\": \"no username and/or password\"}";
 		
 		boolean login = false;
-		if (session.getAttribute("login") == null) {
+		if (session.getAttribute("login") == null) {			
+			Integer userId = suppDao.getUserId(username);
+			if (userId == null) return "{\"result\": \"fail\", \"message\": \"username does not exist\"}";
+		
 			Pbkdf2PasswordEncoder encoder = new Pbkdf2PasswordEncoder("muchsecret", 1000, 256);
 			String encodedPassword = suppDao.getPassword(username);
 			login = encoder.matches(password, encodedPassword);
 			if (login) {
 				request.getSession().setAttribute("login", username);
+				return "{\"result\": \"success\"}";
+			} else {
+				return "{\"result\": \"fail\", \"message\": \"incorrect password\"}";
 			}
-			return "{\"result\": \"" + (login? "success": "fail") + "\"}";
 		} else {
-			return "{\"result\": \"fail\", \"message\": \"already logged in as " + username + "\"}";
+			return "{\"result\": \"fail\", \"message\": \"already logged in as " + (String) session.getAttribute("login") + "\"}";
 		}
 		
 	}
@@ -62,10 +71,10 @@ public class SuppServiceImpl implements SuppService {
 	@Override
 	public String checkLogin(HttpServletRequest request) {
 		String username = (String) request.getSession().getAttribute("login");
-		if (username == null) {
+		if (username == null || username.isEmpty()) {
 			return "{\"result\": \"fail\"}";
 		} else {
-			return "{\"result\": \"success\", \"message\": \"logged in as " + username + "\"}";
+			return "{\"result\": \"success\", \"username\": \"" + username + "\"}";
 		}
 	}
 

@@ -12,8 +12,10 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.CrossOrigin;
 
 @RestController
+@CrossOrigin(origins = {"http://localhost"}, allowCredentials = "true")
 @RequestMapping(path = "/", produces = "application/json")	
 public class SuppController {
 	
@@ -24,8 +26,8 @@ public class SuppController {
 	}
 	
 	@PostMapping("/create")
-	public String createLogin(@RequestBody Map<String, Object> user) {
-		return suppService.createLogin(user);
+	public String createLogin(@RequestBody Map<String, Object> user, HttpServletRequest request) {
+		return suppService.createLogin(user, request);
 	}
 
 	@PostMapping("/login")
