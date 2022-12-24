@@ -63,4 +63,51 @@ public class TicketServiceImpl implements TicketService {
 		return "{\"result\": \"success\"}";
 	}
 	
+	@Override
+	public Map<String, Object> listTickets(HttpServletRequest request) {
+		HttpSession session = request.getSession();
+		Integer userId = (Integer) session.getAttribute("userId");
+		
+		Map<String, Object> map = new HashMap<>();
+		if (userId == null || userId == 0) {
+			map.put("result", "fail");
+			map.put("message", "not logged in");
+			return map;
+		}
+		
+		map.put("result", "success");
+		map.put("tickets", ticketDao.listTickets(userId));
+		return map;
+	}
+	
+	@Override
+	public Map<String, Object> listContents(int ticketId, HttpServletRequest request) {
+		Map<String, Object> map = new HashMap<>();
+		if (ticketId == 0) {
+			map.put("result", "fail");
+			map.put("message", "incorrect ticket id");
+			return map;
+		}
+		
+		HttpSession session = request.getSession();
+		Integer userId = (Integer) session.getAttribute("userId");
+		
+		if (userId == null || userId == 0) {
+			map.put("result", "fail");
+			map.put("message", "not logged in");
+			return map;
+		}
+		
+		Integer check = ticketDao.checkCreator(ticketId, userId);
+		if (check == null || check == 0) {
+			map.put("result", "fail");
+			map.put("message", "incorrect ticekt id");
+			return map;
+		}
+		
+		map.put("result", "success");
+		map.put("contents", ticketDao.listContents(ticketId));
+		return map;
+	}
+	
 }

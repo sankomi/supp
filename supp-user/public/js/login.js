@@ -8,7 +8,7 @@ let username;
 	}
 	
 	let res = await fetch(
-		"http://localhost:3000/check",
+		"http://localhost:3000/user/check/",
 		{
 			credentials: "include",
 			method: "GET",

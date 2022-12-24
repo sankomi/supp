@@ -9,12 +9,8 @@
 	</head>
 	<body>
 		<div id="app" style="display: none;">
-			<h1>supp user</h1>
-			<p>hello, <span id="welcome"></span>!</p>
-			<p>
-				<button id="logout">logout</button>
-			</p>
-			<div id="tickets"></div>
+			<h1>ticket</h1>
+			<div id="contents"></div>
 		</div>
 		<script src="/js/login.js"></script>
 		<script>
@@ -27,8 +23,10 @@
 						return;
 					}
 					
+					let params = new URLSearchParams(window.location.search);
+					let ticketId = parseInt(params.get("id"), 10);
 					fetch(
-						"http://localhost:3000/ticket/list/",
+						"http://localhost:3000/ticket/content/?ticketId=" + String(ticketId),
 						{
 							credentials: "include",
 							method: "GET",
@@ -39,38 +37,24 @@
 					)
 						.then(res => res.json())
 						.then(json => {
-							const tickets = document.querySelector("#tickets");
+							const contents = document.querySelector("#contents");
 							
 							if (json.result === "fail") {
-								tickets.innerHTML = "<p>failed to fetch tickets</p>";
+								contents.innerHTML = "<p>failed to fetch contents</p>";
 								return;
 							}
 							
 							let string = "<ul>";
-							json.tickets.map(ticket => {
-								string += "<li><a href=\"/ticket/?id=" + ticket.id + "\">" + ticket.title + "</a></li>";
+							json.contents.map(content => {
+								string += "<li><p>" + content.username + "</p><p>" + content.content + "</p></li>";
 							});
 							string += "</ul>";
-							tickets.innerHTML = string;
+							contents.innerHTML = string;
+						})
+						.catch(error => {
+							const contents = document.querySelector("#contents");
+							contents.innerHTML = "<p>failed to fetch contents</p>";
 						});
-					
-					document.querySelector("#welcome").textContent = username;
-					
-					document.querySelector("#logout").addEventListener("click", async event => {
-						let res = await fetch(
-							"http://localhost:3000/user/logout/",
-							{
-								credentials: "include",
-								method: "DELETE",
-								headers: {
-									"Accept": "application/json",
-									"Content-Type": "application/json",
-								},
-							}
-						);
-						let json = await res.json();
-						if (json.result === "success") window.location.href = "/login/";
-					});
 					
 					window.dispatchEvent(new Event("show"));
 				}

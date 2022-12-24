@@ -35,4 +35,17 @@ public class TicketController {
 		return ticketService.addContent(map, request);
 	}
 	
+	@GetMapping("/list/")
+	public Map<String, Object> listTickets(HttpServletRequest request) {
+		return ticketService.listTickets(request);
+	}
+	
+	@GetMapping("/content/")
+	public Map<String, Object> listContents(
+		@RequestParam(value = "ticketId") int ticketId,
+		HttpServletRequest request
+	) {
+		return ticketService.listContents(ticketId, request);
+	}
+	
 }

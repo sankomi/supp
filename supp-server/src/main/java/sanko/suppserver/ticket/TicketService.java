@@ -8,5 +8,7 @@ public interface TicketService {
 	
 	public String createTicket(Map<String, Object> map, HttpServletRequest request);
 	public String addContent(Map<String, Object> map, HttpServletRequest request);
+	public Map<String, Object> listTickets(HttpServletRequest request);
+	public Map<String, Object> listContents(int ticketId, HttpServletRequest request);
 
 }

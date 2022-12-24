@@ -39,7 +39,7 @@
 					document.querySelector("#login").addEventListener("submit", async event => {
 						event.preventDefault();
 						let res = await fetch(
-							"http://localhost:3000/login",
+							"http://localhost:3000/user/login/",
 							{
 								credentials: "include",
 								method: "POST",
