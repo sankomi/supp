@@ -3,17 +3,17 @@
 	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="sanko.suppserver.SuppDao">
-	<insert id="createLogin">
-		INSERT INTO logins (username, password) 
+<mapper namespace="sanko.suppserver.user.UserDao">
+	<insert id="createLogin" useGeneratedKeys="true" keyProperty="returner.id" keyColumn="id">
+		INSERT INTO users (username, password) 
 		VALUES (#{username}, #{password})
 	</insert>
 	
 	<select id="getUserId" resultType="int">
-		SELECT id FROM logins WHERE username = #{username} LIMIT 1
+		SELECT id FROM users WHERE username = #{username} LIMIT 1
 	</select>
 	
 	<select id="getPassword" resultType="string">
-		SELECT password FROM logins WHERE username = #{username} LIMIT 1
+		SELECT password FROM users WHERE username = #{username} LIMIT 1
 	</select>
 </mapper>

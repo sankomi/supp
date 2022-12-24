@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="sanko.suppserver.ticket.TicketDao">
+	<insert id="createTicket" useGeneratedKeys="true" keyProperty="returner.id" keyColumn="id">
+		INSERT INTO tickets (title, created, userId) 
+		VALUES (#{title}, DATETIME("now"), #{userId})
+	</insert>
+	
+	<insert id="addContent">
+		INSERT INTO contents (created, ticketId, userId, content) 
+		VALUES (DATETIME("now"), #{ticketId}, #{userId}, #{content})
+	</insert>
+	
+	<select id="checkCreator" resultType="int">
+		SELECT id FROM tickets WHERE id = #{ticketId} AND userId = #{userId} LIMIT 1
+	</select>
+</mapper>
