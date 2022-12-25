@@ -105,6 +105,7 @@ public class TicketServiceImpl implements TicketService {
 		}
 		
 		map.put("result", "success");
+		map.put("title", ticketDao.getTitle(ticketId));
 		map.put("contents", ticketDao.listContents(ticketId));
 		return map;
 	}

@@ -40,8 +40,12 @@ public class UserServiceImpl implements UserService {
 		if (inserted == 0) {
 			return "{\"result\": \"fail\", \"message\": \"error\"}";
 		} else {
+			userId = returner.getId();
 			request.getSession().setAttribute("username", username);
-			request.getSession().setAttribute("userId", returner.getId());
+			request.getSession().setAttribute("userId", userId);
+			
+			if (userId == 1) userDao.setSupport(userId);
+			
 			return "{\"result\": \"success\"}";
 		}
 	}
@@ -92,6 +96,45 @@ public class UserServiceImpl implements UserService {
 	public String logout(HttpServletRequest request) {
 		request.getSession().removeAttribute("username");
 		request.getSession().removeAttribute("userId");
+		return "{\"result\": \"success\"}";
+	}
+	
+	@Override
+	public Map<String, Object> listUsers(HttpServletRequest request) {
+		Map<String, Object> map = new HashMap<>();
+		
+		Integer supportId = (Integer) request.getSession().getAttribute("userId");
+		if (supportId == null || supportId == 0) {
+			map.put("result", "fail");
+			map.put("message", "not logged in");
+			return map;
+		}
+		Integer isSupport = userDao.checkSupport(supportId);
+		if (isSupport == null || isSupport == 0) {
+			map.put("result", "fail");
+			map.put("message", "no permission");
+			return map;
+		}
+		
+		map.put("result", "success");
+		map.put("users", userDao.listUsers());
+		return map;
+	}
+	
+	@Override
+	public String setSupport(Map<String, Object> map, HttpServletRequest request) {
+		Integer supportId = (Integer) request.getSession().getAttribute("userId");
+		if (supportId == null || supportId == 0) return "{\"result\": \"fail\", \"message\": \"not logged in\"}";
+		
+		Integer userId = Integer.parseInt(map.get("userId").toString());
+		Integer support = Integer.parseInt(map.get("support").toString());
+		
+		Integer isSupport = userDao.checkSupport(supportId);
+		if (isSupport == null || isSupport == 0) return "{\"result\": \"fail\", \"message\": \"no permission\"}";
+		
+		if (support == 0) userDao.unsetSupport(userId);
+		else userDao.setSupport(userId);
+		
 		return "{\"result\": \"success\"}";
 	}
 	

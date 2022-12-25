@@ -30,8 +30,12 @@
 		OR (SELECT 1 FROM users WHERE id = #{userId} AND support IS NOT NULL)
 	</select>
 	
+	<select id="getTitle" resultType="string">
+		SELECT title FROM tickets WHERE id = #{ticketId} LIMIT 1
+	</select>
+	
 	<select id="listContents" resultType="hashmap">
-		SELECT contents.id, contents.created, users.username, contents.content FROM contents
+		SELECT contents.id, contents.created, users.username, users.support, contents.content FROM contents
 		INNER JOIN users ON users.id = contents.userId
 		WHERE contents.ticketId = #{ticketId}
 	</select>

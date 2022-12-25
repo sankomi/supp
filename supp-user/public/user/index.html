@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="robots" content="noindex">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>user - supp user</title>
+		<link rel="stylesheet" href="/css/style.css">
+	</head>
+	<body>
+		<div id="app" style="display: none;">
+			<h1>users</h1>
+			<div id="users"></div>
+		</div>
+		<script src="/js/login.js"></script>
+		<script>
+			{
+				window.addEventListener("login", onLogin);
+				async function onLogin(event) {
+					window.removeEventListener("login", onLogin);
+					if (!event.detail) {
+						window.location.href = "/login/";
+						return;
+					}
+					
+					fetchUser();
+					function fetchUser() {
+						users.innerHTML = null;
+						fetch(
+							"http://localhost:3000/user/list/",
+							{
+								credentials: "include",
+								method: "GET",
+								headers: {
+									"Content-Type": "application/json",
+								},
+							}
+						)
+							.then(res => res.json())
+							.then(json => {
+								const users = document.querySelector("#users");
+								
+								if (json.result === "fail") {
+									users.innerHTML = "<p>failed to fetch users</p>";
+									return;
+								}
+								
+								let string = "<ul>";
+								json.users.map(user => {
+									if (user.support) {
+										string += "<li style=\"background: #fafafa\"><p>" + user.username + "</p></li>";
+									} else {
+										string += "<li><p>" + user.username + "</p></li>";
+									}
+								});
+								string += "</ul>";
+								users.innerHTML = string;
+							})
+							.catch(error => {
+								const users = document.querySelector("#users");
+								users.innerHTML = "<p>failed to fetch users</p>";
+							});
+					}
+					
+					window.dispatchEvent(new Event("show"));
+				}
+			}
+		</script>
+	</body>
+</html>

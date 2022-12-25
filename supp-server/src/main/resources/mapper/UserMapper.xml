@@ -16,4 +16,20 @@
 	<select id="getPassword" resultType="string">
 		SELECT password FROM users WHERE username = #{username} LIMIT 1
 	</select>
+	
+	<select id="listUsers" resultType="hashmap">
+		SELECT id, username, support FROM users;
+	</select>
+	
+	<select id="checkSupport" resultType="int">
+		SELECT id FROM users WHERE id = #{userId} AND support IS NOT NULL LIMIT 1
+	</select>
+	
+	<insert id="setSupport">
+		UPDATE users SET support = 1 WHERE id = #{userId}
+	</insert>
+	
+	<insert id="unsetSupport">
+		UPDATE users SET support = NULL WHERE id = #{userId}
+	</insert>
 </mapper>

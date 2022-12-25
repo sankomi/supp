@@ -4,13 +4,23 @@
 		<meta charset="UTF-8">
 		<meta name="robots" content="noindex">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<title>supp user</title>
+		<title>ticket - supp user</title>
 		<link rel="stylesheet" href="/css/style.css">
 	</head>
 	<body>
 		<div id="app" style="display: none;">
 			<h1>ticket</h1>
+			<h2 id="title"></h2>
 			<div id="contents"></div>
+			<form id="add">
+				<p>
+					<label for="content">content</label>
+					<textarea name="content" id="content"></textarea>
+				</p>
+				<p>
+					<input type="submit" value="submit">
+				</p>
+			</form>
 		</div>
 		<script src="/js/login.js"></script>
 		<script>
@@ -25,36 +35,73 @@
 					
 					let params = new URLSearchParams(window.location.search);
 					let ticketId = parseInt(params.get("id"), 10);
-					fetch(
-						"http://localhost:3000/ticket/content/?ticketId=" + String(ticketId),
-						{
-							credentials: "include",
-							method: "GET",
-							headers: {
-								"Content-Type": "application/json",
-							},
-						}
-					)
-						.then(res => res.json())
-						.then(json => {
-							const contents = document.querySelector("#contents");
-							
-							if (json.result === "fail") {
-								contents.innerHTML = "<p>failed to fetch contents</p>";
-								return;
+					
+					fetchContent();
+					function fetchContent() {
+						content.innerHTML = null;
+						fetch(
+							"http://localhost:3000/ticket/content/?ticketId=" + ticketId,
+							{
+								credentials: "include",
+								method: "GET",
+								headers: {
+									"Content-Type": "application/json",
+								},
 							}
-							
-							let string = "<ul>";
-							json.contents.map(content => {
-								string += "<li><p>" + content.username + "</p><p>" + content.content + "</p></li>";
+						)
+							.then(res => res.json())
+							.then(json => {
+								const contents = document.querySelector("#contents");
+								
+								if (json.result === "fail") {
+									contents.innerHTML = "<p>failed to fetch contents</p>";
+									return;
+								}
+								
+								document.querySelector("#title").textContent = json.title;
+								
+								let string = "<ul>";
+								json.contents.map(content => {
+									if (content.support) {
+										string += "<li style=\"background: #fafafa\"><p>" + content.username + "</p><p>" + content.content + "</p></li>";
+									} else {
+										string += "<li><p>" + content.username + "</p><p>" + content.content + "</p></li>";
+									}
+								});
+								string += "</ul>";
+								contents.innerHTML = string;
+							})
+							.catch(error => {
+								const contents = document.querySelector("#contents");
+								contents.innerHTML = "<p>failed to fetch contents</p>";
 							});
-							string += "</ul>";
-							contents.innerHTML = string;
-						})
-						.catch(error => {
-							const contents = document.querySelector("#contents");
-							contents.innerHTML = "<p>failed to fetch contents</p>";
-						});
+					}
+					
+					
+					document.querySelector("#add").addEventListener("submit", async event => {
+						event.preventDefault();
+						const content = document.querySelector("#content");
+						let res = await fetch(
+							"http://localhost:3000/ticket/add/",
+							{
+								credentials: "include",
+								method: "POST",
+								headers: {
+									"Accept": "application/json",
+									"Content-Type": "application/json",
+								},
+								body: JSON.stringify({
+									ticketId,
+									content: content.value,
+								}),
+							}
+						);
+						let json = await res.json();
+						if (json.result === "success") fetchContent();
+						else alert(json.message);
+						content.value = null;
+					});
+					
 					
 					window.dispatchEvent(new Event("show"));
 				}
