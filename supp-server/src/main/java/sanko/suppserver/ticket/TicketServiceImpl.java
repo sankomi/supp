@@ -36,10 +36,9 @@ public class TicketServiceImpl implements TicketService {
 		if (inserted == 0) return "{\"result\": \"fail\", \"message\": \"error\"}";
 		
 		int ticketId = returner.getId();
-		returner.setId(0);
 		inserted = ticketDao.addContent(returner, ticketId, userId, content);
 		if (inserted == 0) return "{\"result\": \"fail\", \"message\": \"error\"}";
-		return "{\"result\": \"success\"}";
+		return "{\"result\": \"success\", \"ticketId\": " + ticketId + "}";
 	}
 	
 	@Override
@@ -54,7 +53,7 @@ public class TicketServiceImpl implements TicketService {
 		if (ticketId == null || ticketId == 0) return "{\"result\": \"fail\", \"message\": \"no ticket id\"}";
 		if (content == null || content.isEmpty()) return "{\"result\": \"fail\", \"message\": \"no content\"}";
 		
-		Integer check = ticketDao.checkCreator(ticketId, userId);
+		Integer check = ticketDao.checkAccess(ticketId, userId);
 		if (check == null || check == 0) return "{\"result\": \"fail\", \"message\": \"incorrect ticket id\"}";
 		
 		Returner returner = new Returner();
@@ -98,10 +97,10 @@ public class TicketServiceImpl implements TicketService {
 			return map;
 		}
 		
-		Integer check = ticketDao.checkCreator(ticketId, userId);
+		Integer check = ticketDao.checkAccess(ticketId, userId);
 		if (check == null || check == 0) {
 			map.put("result", "fail");
-			map.put("message", "incorrect ticekt id");
+			map.put("message", "incorrect ticket id");
 			return map;
 		}
 		

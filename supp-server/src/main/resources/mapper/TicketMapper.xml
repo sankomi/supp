@@ -14,12 +14,20 @@
 		VALUES (DATETIME("now"), #{ticketId}, #{userId}, #{content})
 	</insert>
 	
-	<select id="checkCreator" resultType="int">
-		SELECT id FROM tickets WHERE id = #{ticketId} AND userId = #{userId} LIMIT 1
+	<select id="checkAccess" resultType="int">
+		SELECT id FROM tickets
+		WHERE id = #{ticketId}
+		AND (
+			userId = #{userId}
+			OR (SELECT 1 FROM users WHERE id = #{userId} AND support IS NOT NULL)
+		) LIMIT 1
 	</select>
 	
 	<select id="listTickets" resultType="hashmap">
-		SELECT id, title, created FROM tickets WHERE userId = #{userId}
+		SELECT tickets.id, tickets.title, tickets.created, users.username FROM tickets
+		INNER JOIN users ON users.id = tickets.userId
+		WHERE tickets.userId = #{userId}
+		OR (SELECT 1 FROM users WHERE id = #{userId} AND support IS NOT NULL)
 	</select>
 	
 	<select id="listContents" resultType="hashmap">

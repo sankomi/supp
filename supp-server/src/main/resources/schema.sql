@@ -1,7 +1,8 @@
 CREATE TABLE IF NOT EXISTS users (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	username TEXT,
-	password TEXT
+	password TEXT,
+	support INTEGER
 );
 
 CREATE TABLE IF NOT EXISTS tickets (

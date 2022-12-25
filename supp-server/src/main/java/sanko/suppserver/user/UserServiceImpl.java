@@ -81,7 +81,7 @@ public class UserServiceImpl implements UserService {
 	public String checkLogin(HttpServletRequest request) {
 		String username = (String) request.getSession().getAttribute("username");
 		Integer userId = (Integer) request.getSession().getAttribute("userId");
-		if (userId == null || userId == 0 || username == null || username.isEmpty()) {
+		if (userId == null || userId == 0) {
 			return "{\"result\": \"fail\"}";
 		} else {
 			return "{\"result\": \"success\", \"username\": \"" + username + "\"}";
