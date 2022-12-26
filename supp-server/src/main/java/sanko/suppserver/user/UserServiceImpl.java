@@ -28,9 +28,9 @@ public class UserServiceImpl implements UserService {
 		if (username == null || username.isEmpty()) return "{\"result\": \"fail\", \"message\": \"no username and/or password\"}";
 		if (password == null || password.isEmpty()) return "{\"result\": \"fail\", \"message\": \"no username and/or password\"}";
 		
-		Integer userId = userDao.getUserId(username);
+		Map<String, Object> user = userDao.getUser(username);
 		
-		if (userId != null) return "{\"result\": \"fail\", \"message\": \"username already exists\"}";
+		if (user != null) return "{\"result\": \"fail\", \"message\": \"user already exists\"}";
 		
 		Pbkdf2PasswordEncoder encoder = new Pbkdf2PasswordEncoder("muchsecret", 1000, 256);
 		String encodedPassword = encoder.encode(password);
@@ -40,11 +40,14 @@ public class UserServiceImpl implements UserService {
 		if (inserted == 0) {
 			return "{\"result\": \"fail\", \"message\": \"error\"}";
 		} else {
-			userId = returner.getId();
+			int userId = returner.getId();
 			request.getSession().setAttribute("username", username);
 			request.getSession().setAttribute("userId", userId);
 			
-			if (userId == 1) userDao.setSupport(userId);
+			if (userId == 1) {
+				userDao.setSupport(userId);
+				request.getSession().setAttribute("support", 1);
+			}
 			
 			return "{\"result\": \"success\"}";
 		}
@@ -62,15 +65,21 @@ public class UserServiceImpl implements UserService {
 		
 		boolean login = false;
 		if (session.getAttribute("username") == null) {			
-			Integer userId = userDao.getUserId(username);
-			if (userId == null) return "{\"result\": \"fail\", \"message\": \"username does not exist\"}";
+			Map<String, Object> user = userDao.getUser(username);
+			if (user == null) return "{\"result\": \"fail\", \"message\": \"user does not exist\"}";
 		
 			Pbkdf2PasswordEncoder encoder = new Pbkdf2PasswordEncoder("muchsecret", 1000, 256);
-			String encodedPassword = userDao.getPassword(username);
+			String encodedPassword = (String) user.get("password");
 			login = encoder.matches(password, encodedPassword);
 			if (login) {
 				request.getSession().setAttribute("username", username);
-				request.getSession().setAttribute("userId", userId);
+				request.getSession().setAttribute("userId", (Integer) user.get("id"));
+				
+				Integer support = (Integer) user.get("support");
+				if (support != null && support != 0) {
+					request.getSession().setAttribute("support", 1);
+				}
+				
 				return "{\"result\": \"success\", \"username\": \"" + username + "\"}";
 			} else {
 				return "{\"result\": \"fail\", \"message\": \"incorrect password\"}";
@@ -85,10 +94,11 @@ public class UserServiceImpl implements UserService {
 	public String checkLogin(HttpServletRequest request) {
 		String username = (String) request.getSession().getAttribute("username");
 		Integer userId = (Integer) request.getSession().getAttribute("userId");
+		Integer support = (Integer) request.getSession().getAttribute("support");
 		if (userId == null || userId == 0) {
 			return "{\"result\": \"fail\"}";
 		} else {
-			return "{\"result\": \"success\", \"username\": \"" + username + "\"}";
+			return "{\"result\": \"success\", \"username\": \"" + username + "\", \"support\": " + support + "}";
 		}
 	}
 
@@ -96,6 +106,7 @@ public class UserServiceImpl implements UserService {
 	public String logout(HttpServletRequest request) {
 		request.getSession().removeAttribute("username");
 		request.getSession().removeAttribute("userId");
+		request.getSession().removeAttribute("support");
 		return "{\"result\": \"success\"}";
 	}
 	

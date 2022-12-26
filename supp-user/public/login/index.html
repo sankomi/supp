@@ -31,7 +31,7 @@
 				window.addEventListener("login", onLogin);
 				async function onLogin(event) {
 					window.removeEventListener("login", onLogin);
-					if (event.detail) {
+					if (event.detail.login) {
 						window.location.href = "/";
 						return;
 					}

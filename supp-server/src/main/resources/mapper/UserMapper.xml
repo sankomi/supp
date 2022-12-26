@@ -9,12 +9,8 @@
 		VALUES (#{username}, #{password})
 	</insert>
 	
-	<select id="getUserId" resultType="int">
-		SELECT id FROM users WHERE username = #{username} LIMIT 1
-	</select>
-	
-	<select id="getPassword" resultType="string">
-		SELECT password FROM users WHERE username = #{username} LIMIT 1
+	<select id="getUser" resultType="hashmap">
+		SELECT id, password, support FROM users WHERE username = #{username} LIMIT 1
 	</select>
 	
 	<select id="listUsers" resultType="hashmap">

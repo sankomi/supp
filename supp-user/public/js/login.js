@@ -1,4 +1,3 @@
-let username;
 (async () => {
 	window.addEventListener("show", showApp);
 	function showApp(event) {
@@ -20,9 +19,14 @@ let username;
 	);
 	let json = await res.json();
 	if (json.username) {
-		username = json.username;
-		window.dispatchEvent(new CustomEvent("login", {detail: true}));
+		window.dispatchEvent(new CustomEvent("login", {detail: {
+			login: true,
+			username: json.username,
+			support: json.support,
+		}}));
 	} else {
-		window.dispatchEvent(new CustomEvent("login", {detail: false}));
+		window.dispatchEvent(new CustomEvent("login", {detail: {
+			login: false,
+		}}));
 	}
 })();

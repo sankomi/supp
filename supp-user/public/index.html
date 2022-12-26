@@ -16,6 +16,7 @@
 			</p>
 			<div id="tickets"></div>
 			<p><a href="/new/">new ticket</a></p>
+			<p id="users"><a href="/user/">users</a></p>
 		</div>
 		<script src="/js/login.js"></script>
 		<script>
@@ -23,39 +24,46 @@
 				window.addEventListener("login", onLogin);
 				async function onLogin(event) {
 					window.removeEventListener("login", onLogin);
-					if (!event.detail) {
+					if (!event.detail.login) {
 						window.location.href = "/login/";
 						return;
 					}
 					
-					fetch(
-						"http://localhost:3000/ticket/list/",
-						{
-							credentials: "include",
-							method: "GET",
-							headers: {
-								"Content-Type": "application/json",
-							},
-						}
-					)
-						.then(res => res.json())
-						.then(json => {
-							const tickets = document.querySelector("#tickets");
-							
-							if (json.result === "fail") {
-								tickets.innerHTML = "<p>failed to fetch tickets</p>";
-								return;
-							}
-							
-							let string = "<ul>";
-							json.tickets.map(ticket => {
-								string += "<li><a href=\"/ticket/?id=" + ticket.id + "\">" + ticket.username + " - " + ticket.title + "</a></li>";
-							});
-							string += "</ul>";
-							tickets.innerHTML = string;
-						});
+					if (!event.detail.support) {
+						document.querySelector("#users").remove();
+					}
 					
-					document.querySelector("#welcome").textContent = username;
+					fetchTickets();
+					function fetchTickets() {
+						fetch(
+							"http://localhost:3000/ticket/list/",
+							{
+								credentials: "include",
+								method: "GET",
+								headers: {
+									"Content-Type": "application/json",
+								},
+							}
+						)
+							.then(res => res.json())
+							.then(json => {
+								const tickets = document.querySelector("#tickets");
+								
+								if (json.result === "fail") {
+									tickets.innerHTML = "<p>failed to fetch tickets</p>";
+									return;
+								}
+								
+								let string = "<ul>";
+								json.tickets.map(ticket => {
+									string += "<li><a href=\"/ticket/?id=" + ticket.id + "\">" + ticket.username + " - " + ticket.title + "</a></li>";
+								});
+								string += "</ul>";
+								tickets.innerHTML = string;
+							});
+					}
+					
+					document.querySelector("#welcome").textContent = event.detail.username;
 					
 					document.querySelector("#logout").addEventListener("click", async event => {
 						let res = await fetch(

@@ -18,14 +18,13 @@
 				window.addEventListener("login", onLogin);
 				async function onLogin(event) {
 					window.removeEventListener("login", onLogin);
-					if (!event.detail) {
+					if (!event.detail.login) {
 						window.location.href = "/login/";
 						return;
 					}
 					
 					fetchUser();
 					function fetchUser() {
-						users.innerHTML = null;
 						fetch(
 							"http://localhost:3000/user/list/",
 							{
@@ -39,27 +38,56 @@
 							.then(res => res.json())
 							.then(json => {
 								const users = document.querySelector("#users");
+								users.innerHTML = null;
 								
 								if (json.result === "fail") {
 									users.innerHTML = "<p>failed to fetch users</p>";
 									return;
 								}
 								
-								let string = "<ul>";
+								const ul = document.createElement("ul");
 								json.users.map(user => {
+									const li = document.createElement("li");
+									const p = document.createElement("p");
+									const button = document.createElement("button");
+									p.appendChild(document.createTextNode(user.username));
 									if (user.support) {
-										string += "<li style=\"background: #fafafa\"><p>" + user.username + "</p></li>";
+										li.style.background = "#fafafa";
+										button.textContent = "remove";
+										button.addEventListener("click", setSupport.bind(null, user.id, 0));
 									} else {
-										string += "<li><p>" + user.username + "</p></li>";
+										button.textContent = "add";
+										button.addEventListener("click", setSupport.bind(null, user.id, 1));
 									}
+									li.appendChild(p);
+									li.appendChild(button);
+									ul.appendChild(li);
 								});
-								string += "</ul>";
-								users.innerHTML = string;
+								users.appendChild(ul);
 							})
 							.catch(error => {
 								const users = document.querySelector("#users");
 								users.innerHTML = "<p>failed to fetch users</p>";
 							});
+					}
+					
+					async function setSupport(userId, support, event) {
+						let res = await fetch(
+							"http://localhost:3000/user/support/",
+							{
+								credentials: "include",
+								method: "PUT",
+								headers: {
+									"Accept": "application/json",
+									"Content-Type": "application/json",
+								},
+								body: JSON.stringify({
+									userId,
+									support,
+								}),
+							}
+						);
+						fetchUser();
 					}
 					
 					window.dispatchEvent(new Event("show"));
