@@ -28,6 +28,7 @@
 		INNER JOIN users ON users.id = tickets.userId
 		WHERE tickets.userId = #{userId}
 		OR (SELECT 1 FROM users WHERE id = #{userId} AND support IS NOT NULL)
+		ORDER BY tickets.id DESC
 	</select>
 	
 	<select id="getTitle" resultType="string">

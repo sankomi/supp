@@ -9,18 +9,44 @@
 	</head>
 	<body>
 		<div id="app" style="display: none;">
-			<h1>ticket</h1>
-			<h2 id="title"></h2>
-			<div id="contents"></div>
-			<form id="add">
-				<p>
-					<label for="content">content</label>
-					<textarea name="content" id="content"></textarea>
-				</p>
-				<p>
-					<input type="submit" value="submit">
-				</p>
-			</form>
+			<header class="header">
+				<div class="header__inner max-width-container">
+					<div class="header__title">supp user</div>
+					<div class="header__hello" id="hello"></div>
+					<nav class="header__nav">
+						<ul>
+							<li id="home"><a href="/">home</a></li>
+							<li id="users"><a href="/user/">users</a></li>
+							<li>
+								<a href="/login/" id="login">login</a>
+								<a href="/logout/" id="logout">logout</a>
+							</li>
+						</ul>
+					</nav>
+				</div>
+			</header>
+			
+			<main class="main">
+				<div class="main__inner max-width-container">
+					<h1 id="title">ticket</h1>
+					<div class="contents" id="contents"></div>
+					<form class="content-form" id="add">
+						<p>
+							<label for="content">reply</label>
+							<textarea name="content" id="content"></textarea>
+						</p>
+						<p>
+							<input type="submit" value="submit">
+						</p>
+					</form>
+				</div>
+			</main>
+			
+			<footer class="footer">
+				<div class="footer__inner max-width-container">
+					<p>&copy; 2022 sanko</p>
+				</div>
+			</footer>
 		</div>
 		<script src="/js/login.js"></script>
 		<script>
@@ -58,13 +84,14 @@
 								}
 								
 								document.querySelector("#title").textContent = json.title;
+								document.title = json.title + " - supp user";
 								
 								let string = "<ul>";
 								json.contents.map(content => {
 									if (content.support) {
-										string += "<li style=\"background: #fafafa\"><p>" + content.username + "</p><p>" + content.content + "</p></li>";
+										string += "<li class=\"contents__support\"><p>" + content.username + "<span class=\"created\">" + content.created + "</span></p><p>" + content.content.replaceAll("\n", "<br>") + "</p></li>";
 									} else {
-										string += "<li><p>" + content.username + "</p><p>" + content.content + "</p></li>";
+										string += "<li><p>" + content.username + "<span class=\"created\">" + content.created + "</span></p><p>" + content.content.replaceAll("\n", "<br>") + "</p></li>";
 									}
 								});
 								string += "</ul>";

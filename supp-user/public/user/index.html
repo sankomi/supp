@@ -4,13 +4,40 @@
 		<meta charset="UTF-8">
 		<meta name="robots" content="noindex">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<title>user - supp user</title>
+		<title>users - supp user</title>
 		<link rel="stylesheet" href="/css/style.css">
 	</head>
 	<body>
 		<div id="app" style="display: none;">
-			<h1>users</h1>
-			<div id="users"></div>
+			<header class="header">
+				<div class="header__inner max-width-container">
+					<div class="header__title">supp user</div>
+					<div class="header__hello" id="hello"></div>
+					<nav class="header__nav">
+						<ul>
+							<li id="home"><a href="/">home</a></li>
+							<li id="users"><a href="/user/">users</a></li>
+							<li>
+								<a href="/login/" id="login">login</a>
+								<a href="/logout/" id="logout">logout</a>
+							</li>
+						</ul>
+					</nav>
+				</div>
+			</header>
+			
+			<main class="main">
+				<div class="main__inner max-width-container">
+					<h1>users</h1>
+					<div class="user-list" id="user-list"></div>
+				</div>
+			</main>
+			
+			<footer class="footer">
+				<div class="footer__inner max-width-container">
+					<p>&copy; 2022 sanko</p>
+				</div>
+			</footer>
 		</div>
 		<script src="/js/login.js"></script>
 		<script>
@@ -37,7 +64,7 @@
 						)
 							.then(res => res.json())
 							.then(json => {
-								const users = document.querySelector("#users");
+								const users = document.querySelector("#user-list");
 								users.innerHTML = null;
 								
 								if (json.result === "fail") {
@@ -48,25 +75,25 @@
 								const ul = document.createElement("ul");
 								json.users.map(user => {
 									const li = document.createElement("li");
-									const p = document.createElement("p");
+									const span = document.createElement("span");
 									const button = document.createElement("button");
-									p.appendChild(document.createTextNode(user.username));
+									span.appendChild(document.createTextNode(user.username));
 									if (user.support) {
-										li.style.background = "#fafafa";
+										li.classList.add("user-list__support");
 										button.textContent = "remove";
 										button.addEventListener("click", setSupport.bind(null, user.id, 0));
 									} else {
 										button.textContent = "add";
 										button.addEventListener("click", setSupport.bind(null, user.id, 1));
 									}
-									li.appendChild(p);
+									li.appendChild(span);
 									li.appendChild(button);
 									ul.appendChild(li);
 								});
 								users.appendChild(ul);
 							})
 							.catch(error => {
-								const users = document.querySelector("#users");
+								const users = document.querySelector("#user-list");
 								users.innerHTML = "<p>failed to fetch users</p>";
 							});
 					}

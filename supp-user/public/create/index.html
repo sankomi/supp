@@ -9,21 +9,48 @@
 	</head>
 	<body>
 		<div id="app" style="display: none;">
-			<h1>create</h1>
-			<form id="create">
-				<p>
-					<label for="username">username</label>
-					<input type="text" id="username" name="username">
-				</p>
-				<p>
-					<label for="password">password</label>
-					<input type="password" id="password" name="password">
-				</p>
-				<p>
-					<input type="submit" value="create">
-				</p>
-			</form>
-			<p>or <a href="/login/">login</a></p>
+			<header class="header">
+				<div class="header__inner max-width-container">
+					<div class="header__title">supp user</div>
+					<div class="header__hello" id="hello"></div>
+					<nav class="header__nav">
+						<ul>
+							<li id="home"><a href="/">home</a></li>
+							<li id="users"><a href="/user/">users</a></li>
+							<li>
+								<a href="/login/" id="login">login</a>
+								<a href="/logout/" id="logout">logout</a>
+							</li>
+						</ul>
+					</nav>
+				</div>
+			</header>
+			
+			<main class="main">
+				<div class="main__inner max-width-container">
+					<h1>create</h1>
+					<form id="create-form">
+						<p>
+							<label for="username">username</label>
+							<input type="text" id="username" name="username">
+						</p>
+						<p>
+							<label for="password">password</label>
+							<input type="password" id="password" name="password">
+						</p>
+						<p>
+							<input type="submit" value="create">
+						</p>
+					</form>
+					<p>or <a href="/login/">login</a></p>
+				</div>
+			</main>
+			
+			<footer class="footer">
+				<div class="footer__inner max-width-container">
+					<p>&copy; 2022 sanko</p>
+				</div>
+			</footer>
 		</div>
 		<script src="/js/login.js"></script>
 		<script>
@@ -36,7 +63,7 @@
 						return;
 					}
 					
-					document.querySelector("#create").addEventListener("submit", async event => {
+					document.querySelector("#create-form").addEventListener("submit", async event => {
 						event.preventDefault();
 						let res = await fetch(
 							"http://localhost:3000/user/create/",

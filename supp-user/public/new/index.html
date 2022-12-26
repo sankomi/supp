@@ -9,20 +9,47 @@
 	</head>
 	<body>
 		<div id="app" style="display: none;">
-			<h1>new ticket</h1>
-			<form id="ticket">
-				<p>
-					<label for="content">title</label>
-					<input name="title" id="title"></input>
-				</p>
-				<p>
-					<label for="content">content</label>
-					<textarea name="content" id="content"></textarea>
-				</p>
-				<p>
-					<input type="submit" value="submit">
-				</p>
-			</form>
+			<header class="header">
+				<div class="header__inner max-width-container">
+					<div class="header__title">supp user</div>
+					<div class="header__hello" id="hello"></div>
+					<nav class="header__nav">
+						<ul>
+							<li id="home"><a href="/">home</a></li>
+							<li id="users"><a href="/user/">users</a></li>
+							<li>
+								<a href="/login/" id="login">login</a>
+								<a href="/logout/" id="logout">logout</a>
+							</li>
+						</ul>
+					</nav>
+				</div>
+			</header>
+			
+			<main class="main">
+				<div class="main__inner max-width-container">
+					<h1>new ticket</h1>
+					<form id="ticket-form">
+						<p>
+							<label for="content">title</label>
+							<input name="title" id="title"></input>
+						</p>
+						<p>
+							<label for="content">content</label>
+							<textarea name="content" id="content"></textarea>
+						</p>
+						<p>
+							<input type="submit" value="submit">
+						</p>
+					</form>
+				</div>
+			</main>
+			
+			<footer class="footer">
+				<div class="footer__inner max-width-container">
+					<p>&copy; 2022 sanko</p>
+				</div>
+			</footer>
 		</div>
 		<script src="/js/login.js"></script>
 		<script>
@@ -35,7 +62,7 @@
 						return;
 					}
 					
-					document.querySelector("#ticket").addEventListener("submit", async event => {
+					document.querySelector("#ticket-form").addEventListener("submit", async event => {
 						event.preventDefault();
 						let res = await fetch(
 							"http://localhost:3000/ticket/create/",

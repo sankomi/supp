@@ -9,14 +9,37 @@
 	</head>
 	<body>
 		<div id="app" style="display: none;">
-			<h1>supp user</h1>
-			<p>hello, <span id="welcome"></span>!</p>
-			<p>
-				<button id="logout">logout</button>
-			</p>
-			<div id="tickets"></div>
-			<p><a href="/new/">new ticket</a></p>
-			<p id="users"><a href="/user/">users</a></p>
+			<header class="header">
+				<div class="header__inner max-width-container">
+					<div class="header__title">supp user</div>
+					<div class="header__hello" id="hello"></div>
+					<nav class="header__nav">
+						<ul>
+							<li id="home"><a href="/">home</a></li>
+							<li id="users"><a href="/user/">users</a></li>
+							<li>
+								<a href="/login/" id="login">login</a>
+								<a href="/logout/" id="logout">logout</a>
+							</li>
+						</ul>
+					</nav>
+				</div>
+			</header>
+			
+			<main class="main">
+				<div class="main__inner max-width-container">
+					<h1>supp user</h1>
+					<p><a href="/new/" class="button">new ticket</a></p>
+					<h2>tickets</h2>
+					<div class="tickets" id="tickets"></div>
+				</div>
+			</main>
+			
+			<footer class="footer">
+				<div class="footer__inner max-width-container">
+					<p>&copy; 2022 sanko</p>
+				</div>
+			</footer>
 		</div>
 		<script src="/js/login.js"></script>
 		<script>
@@ -29,9 +52,7 @@
 						return;
 					}
 					
-					if (!event.detail.support) {
-						document.querySelector("#users").remove();
-					}
+					let support = event.detail.support;
 					
 					fetchTickets();
 					function fetchTickets() {
@@ -56,30 +77,16 @@
 								
 								let string = "<ul>";
 								json.tickets.map(ticket => {
-									string += "<li><a href=\"/ticket/?id=" + ticket.id + "\">" + ticket.username + " - " + ticket.title + "</a></li>";
+									if (support) {
+										string += "<li><p><a href=\"/ticket/?id=" + ticket.id + "\">" + ticket.username + ": " + ticket.title + "<span class=\"created\">" + ticket.created + "</span></a></p></li>";
+									} else {
+										string += "<li><p><a href=\"/ticket/?id=" + ticket.id + "\">" + ticket.title + "<span class=\"created\">" + ticket.created + "</span></a></p></li>";
+									}
 								});
 								string += "</ul>";
 								tickets.innerHTML = string;
 							});
 					}
-					
-					document.querySelector("#welcome").textContent = event.detail.username;
-					
-					document.querySelector("#logout").addEventListener("click", async event => {
-						let res = await fetch(
-							"http://localhost:3000/user/logout/",
-							{
-								credentials: "include",
-								method: "DELETE",
-								headers: {
-									"Accept": "application/json",
-									"Content-Type": "application/json",
-								},
-							}
-						);
-						let json = await res.json();
-						if (json.result === "success") window.location.href = "/login/";
-					});
 					
 					window.dispatchEvent(new Event("show"));
 				}
