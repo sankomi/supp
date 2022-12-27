@@ -78,9 +78,9 @@
 								let string = "<ul>";
 								json.tickets.map(ticket => {
 									if (support) {
-										string += "<li><p><a href=\"/ticket/?id=" + ticket.id + "\">" + ticket.username + ": " + ticket.title + "<span class=\"created\">" + ticket.created + "</span></a></p></li>";
+										string += "<li><p><a href=\"/ticket/?id=" + ticket.id + "\">" + ticket.username + ": " + ticket.title + "<span class=\"created\">" + ticket.lastUser + " @ " + ticket.lastTime + "</span></a></p></li>";
 									} else {
-										string += "<li><p><a href=\"/ticket/?id=" + ticket.id + "\">" + ticket.title + "<span class=\"created\">" + ticket.created + "</span></a></p></li>";
+										string += "<li><p><a href=\"/ticket/?id=" + ticket.id + "\">" + ticket.title + "<span class=\"created\">" + ticket.lastUser + " @ " + ticket.lastTime + "</span></a></p></li>";
 									}
 								});
 								string += "</ul>";

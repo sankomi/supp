@@ -24,11 +24,16 @@
 	</select>
 	
 	<select id="listTickets" resultType="hashmap">
-		SELECT tickets.id, tickets.title, tickets.created, users.username FROM tickets
+		SELECT tickets.id, tickets.title, tickets.created, users.username, last.created AS lastTime, last.username AS lastUser FROM tickets
 		INNER JOIN users ON users.id = tickets.userId
+		LEFT JOIN (
+			SELECT MAX(created) AS created, ticketId, username FROM contents
+			INNER JOIN users ON users.id = contents.userId
+			GROUP BY ticketId
+		) AS last ON last.ticketId = tickets.id
 		WHERE tickets.userId = #{userId}
 		OR (SELECT 1 FROM users WHERE id = #{userId} AND support IS NOT NULL)
-		ORDER BY tickets.id DESC
+		ORDER BY last.created DESC
 	</select>
 	
 	<select id="getTitle" resultType="string">
