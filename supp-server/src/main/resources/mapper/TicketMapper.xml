@@ -24,7 +24,7 @@
 	</select>
 	
 	<select id="listTickets" resultType="hashmap">
-		SELECT tickets.id, tickets.title, tickets.created, users.username, last.created AS lastTime, last.username AS lastUser FROM tickets
+		SELECT tickets.id, tickets.title, tickets.created, tickets.closed, users.username, last.created AS lastTime, last.username AS lastUser FROM tickets
 		INNER JOIN users ON users.id = tickets.userId
 		LEFT JOIN (
 			SELECT MAX(created) AS created, ticketId, username FROM contents
@@ -36,8 +36,8 @@
 		ORDER BY last.created DESC
 	</select>
 	
-	<select id="getTitle" resultType="string">
-		SELECT title FROM tickets WHERE id = #{ticketId} LIMIT 1
+	<select id="getInfo" resultType="hashmap">
+		SELECT title, closed FROM tickets WHERE id = #{ticketId} LIMIT 1
 	</select>
 	
 	<select id="listContents" resultType="hashmap">
@@ -45,4 +45,12 @@
 		INNER JOIN users ON users.id = contents.userId
 		WHERE contents.ticketId = #{ticketId}
 	</select>
+	
+	<insert id="openTicket">
+		UPDATE tickets SET closed = NULL WHERE id = #{ticketId}
+	</insert>
+	
+	<insert id="closeTicket">
+		UPDATE tickets SET closed = 1 WHERE id = #{ticketId}
+	</insert>
 </mapper>

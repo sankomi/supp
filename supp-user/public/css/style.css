@@ -141,6 +141,9 @@ label {
 .tickets ul li a:hover {
 	background-color: black;
 }
+.tickets__ticket--closed {
+	opacity: 0.5;
+}
 
 .contents ul {
 	padding: 0;

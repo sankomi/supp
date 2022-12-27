@@ -29,6 +29,8 @@
 			<main class="main">
 				<div class="main__inner max-width-container">
 					<h1 id="title">ticket</h1>
+					<p><button id="close-ticket">close ticket</button></p>
+					<p id="message"></p>
 					<div class="contents" id="contents"></div>
 					<form class="content-form" id="add">
 						<p>
@@ -59,6 +61,9 @@
 						return;
 					}
 					
+					const closeTicket = document.querySelector("#close-ticket");
+					if (!event.detail.support) closeTicket.remove();
+					
 					let params = new URLSearchParams(window.location.search);
 					let ticketId = parseInt(params.get("id"), 10);
 					
@@ -83,6 +88,14 @@
 									return;
 								}
 								
+								if (json.closed) {
+									document.querySelector("#message").textContent = "this ticket is closed";
+									closeTicket.style.display = "none";
+								} else {
+									document.querySelector("#message").textContent = null;
+									closeTicket.style.display = null;
+								}
+								
 								document.querySelector("#title").textContent = json.title;
 								document.title = json.title + " - supp user";
 								
@@ -103,6 +116,23 @@
 							});
 					}
 					
+					closeTicket.addEventListener("click", async event => {
+						let res = await fetch(
+							"http://localhost:3000/ticket/close/",
+							{
+								credentials: "include",
+								method: "PUT",
+								headers: {
+									"Accept": "application/json",
+									"Content-Type": "application/json",
+								},
+								body: JSON.stringify({
+									ticketId,
+								}),
+							}
+						);
+						fetchContent();
+					});
 					
 					document.querySelector("#add").addEventListener("submit", async event => {
 						event.preventDefault();

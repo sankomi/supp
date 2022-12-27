@@ -59,6 +59,7 @@ public class TicketServiceImpl implements TicketService {
 		Returner returner = new Returner();
 		int inserted = ticketDao.addContent(returner, ticketId, userId, content);
 		if (inserted == 0) return "{\"result\": \"fail\", \"message\": \"error\"}";
+		ticketDao.openTicket(ticketId);
 		return "{\"result\": \"success\"}";
 	}
 	
@@ -105,9 +106,28 @@ public class TicketServiceImpl implements TicketService {
 		}
 		
 		map.put("result", "success");
-		map.put("title", ticketDao.getTitle(ticketId));
+		Map<String, Object> info = ticketDao.getInfo(ticketId);
+		map.put("title", (String) info.get("title"));
+		map.put("closed", (Integer) info.get("closed"));
 		map.put("contents", ticketDao.listContents(ticketId));
 		return map;
+	}
+	
+	@Override
+	public String closeTicket(Map<String, Object> map, HttpServletRequest request) {
+		Integer ticketId = (Integer) map.get("ticketId");
+		if (ticketId == null || ticketId == 0) return "{\"result\": \"fail\", \"message\": \"incorrect ticket id\"}";
+		
+		HttpSession session = request.getSession();
+		Integer userId = (Integer) session.getAttribute("userId");
+		if (userId == null || userId == 0) return "{\"result\": \"fail\", \"message\": \"not logged in\"}";
+		
+		Integer check = ticketDao.checkAccess(ticketId, userId);
+		if (check == null || check == 0) return "{\"result\": \"fail\", \"message\": \"incorrect ticket id\"}";
+		
+		int inserted = ticketDao.closeTicket(ticketId);
+		if (inserted == 0) return "{\"result\": \"fail\", \"message\": \"error\"}";
+		return "{\"result\": \"success\"}";
 	}
 	
 }
