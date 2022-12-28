@@ -8,6 +8,7 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.stereotype.Service;
 
+import sanko.suppserver.poll.PollList;
 import sanko.suppserver.util.Returner;
 
 @Service
@@ -38,6 +39,9 @@ public class TicketServiceImpl implements TicketService {
 		int ticketId = returner.getId();
 		inserted = ticketDao.addContent(returner, ticketId, userId, content);
 		if (inserted == 0) return "{\"result\": \"fail\", \"message\": \"error\"}";
+		
+		PollList.setResults();
+		
 		return "{\"result\": \"success\", \"ticketId\": " + ticketId + "}";
 	}
 	
@@ -60,6 +64,9 @@ public class TicketServiceImpl implements TicketService {
 		int inserted = ticketDao.addContent(returner, ticketId, userId, content);
 		if (inserted == 0) return "{\"result\": \"fail\", \"message\": \"error\"}";
 		ticketDao.openTicket(ticketId);
+		
+		PollList.setResults();
+		
 		return "{\"result\": \"success\"}";
 	}
 	
@@ -127,6 +134,9 @@ public class TicketServiceImpl implements TicketService {
 		
 		int inserted = ticketDao.closeTicket(ticketId);
 		if (inserted == 0) return "{\"result\": \"fail\", \"message\": \"error\"}";
+		
+		PollList.setResults();
+		
 		return "{\"result\": \"success\"}";
 	}
 	

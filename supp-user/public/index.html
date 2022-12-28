@@ -88,6 +88,25 @@
 							});
 					}
 					
+					if (support) checkTickets();
+					function checkTickets() {
+						fetch(
+							"http://localhost:3000/poll/check/",
+							{
+								credentials: "include",
+								method: "GET",
+								headers: {
+									"Content-Type": "application/json",
+								},
+							}
+						)
+							.then(res => res.json())
+							.then(json => {
+								if (json.result === "success") fetchTickets();
+								checkTickets();
+							});
+					}
+					
 					window.dispatchEvent(new Event("show"));
 				}
 			}

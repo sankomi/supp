@@ -120,7 +120,7 @@ public class UserServiceImpl implements UserService {
 			map.put("message", "not logged in");
 			return map;
 		}
-		Integer isSupport = userDao.checkSupport(supportId);
+		Integer isSupport = (Integer) request.getSession().getAttribute("support");
 		if (isSupport == null || isSupport == 0) {
 			map.put("result", "fail");
 			map.put("message", "no permission");
@@ -140,7 +140,7 @@ public class UserServiceImpl implements UserService {
 		Integer userId = Integer.parseInt(map.get("userId").toString());
 		Integer support = Integer.parseInt(map.get("support").toString());
 		
-		Integer isSupport = userDao.checkSupport(supportId);
+		Integer isSupport = (Integer) request.getSession().getAttribute("support");
 		if (isSupport == null || isSupport == 0) return "{\"result\": \"fail\", \"message\": \"no permission\"}";
 		
 		if (support == 0) userDao.unsetSupport(userId);
