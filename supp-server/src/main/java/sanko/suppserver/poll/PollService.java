@@ -7,5 +7,6 @@ import org.springframework.web.context.request.async.DeferredResult;
 public interface PollService {
 	
 	public DeferredResult<String> checkTicket(HttpServletRequest request);
+	public DeferredResult<String> checkContent(int ticketId, HttpServletRequest request);
 
 }

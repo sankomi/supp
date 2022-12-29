@@ -40,7 +40,7 @@ public class TicketServiceImpl implements TicketService {
 		inserted = ticketDao.addContent(returner, ticketId, userId, content);
 		if (inserted == 0) return "{\"result\": \"fail\", \"message\": \"error\"}";
 		
-		PollList.setResults();
+		PollList.setTickets();
 		
 		return "{\"result\": \"success\", \"ticketId\": " + ticketId + "}";
 	}
@@ -65,7 +65,8 @@ public class TicketServiceImpl implements TicketService {
 		if (inserted == 0) return "{\"result\": \"fail\", \"message\": \"error\"}";
 		ticketDao.openTicket(ticketId);
 		
-		PollList.setResults();
+		PollList.setTickets();
+		PollList.setContents(ticketId);
 		
 		return "{\"result\": \"success\"}";
 	}
@@ -135,7 +136,8 @@ public class TicketServiceImpl implements TicketService {
 		int inserted = ticketDao.closeTicket(ticketId);
 		if (inserted == 0) return "{\"result\": \"fail\", \"message\": \"error\"}";
 		
-		PollList.setResults();
+		PollList.setTickets();
+		PollList.setContents(ticketId);
 		
 		return "{\"result\": \"success\"}";
 	}

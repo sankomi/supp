@@ -16,16 +16,31 @@ public class PollServiceImpl implements PollService {
 	public DeferredResult<String> checkTicket(HttpServletRequest request) {
 		DeferredResult<String> defer = new DeferredResult<>(60000l);
 		
-		PollList.add(defer);
+		PollList.addTicket(defer);
 		
-		defer.onTimeout(() -> PollList.setSingleResult(defer, false, "timeout", true));
-		defer.onError((Throwable t) -> PollList.setSingleResult(defer, false, "error", true));
+		defer.onTimeout(() -> PollList.setTicket(defer, false, "timeout", true));
+		defer.onError((Throwable t) -> PollList.setTicket(defer, false, "error", true));
 		
 		Integer supportId = (Integer) request.getSession().getAttribute("userId");
-		if (supportId == null || supportId == 0) PollList.setSingleResult(defer, false, "not logged in", true);
+		if (supportId == null || supportId == 0) PollList.setTicket(defer, false, "not logged in", true);
 			
 		Integer isSupport = (Integer) request.getSession().getAttribute("support");
-		if (isSupport == null || isSupport == 0) PollList.setSingleResult(defer, false, "no permission", true);
+		if (isSupport == null || isSupport == 0) PollList.setTicket(defer, false, "no permission", true);
+		
+		return defer;	
+	}
+	
+	@Override
+	public DeferredResult<String> checkContent(int ticketId, HttpServletRequest request) {
+		DeferredResult<String> defer = new DeferredResult<>(60000l);
+		
+		PollList.addContent(ticketId, defer);
+		
+		defer.onTimeout(() -> PollList.setContent(ticketId, defer, false, "timeout", true));
+		defer.onError((Throwable t) -> PollList.setContent(ticketId, defer, false, "error", true));
+		
+		Integer supportId = (Integer) request.getSession().getAttribute("userId");
+		if (supportId == null || supportId == 0) PollList.setContent(ticketId, defer, false, "not logged in", true);
 		
 		return defer;	
 	}

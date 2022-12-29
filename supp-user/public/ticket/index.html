@@ -67,8 +67,8 @@
 					let params = new URLSearchParams(window.location.search);
 					let ticketId = parseInt(params.get("id"), 10);
 					
-					fetchContent();
-					function fetchContent() {
+					fetchContents();
+					function fetchContents() {
 						fetch(
 							"http://localhost:3000/ticket/content/?ticketId=" + ticketId,
 							{
@@ -109,6 +109,10 @@
 								});
 								string += "</ul>";
 								contents.innerHTML = string;
+								window.scrollTo({
+									top: document.body.scrollHeight,
+									behavior: "smooth",
+								});
 							})
 							.catch(error => {
 								const contents = document.querySelector("#contents");
@@ -131,7 +135,7 @@
 								}),
 							}
 						);
-						fetchContent();
+						fetchContents();
 					});
 					
 					document.querySelector("#add").addEventListener("submit", async event => {
@@ -153,11 +157,29 @@
 							}
 						);
 						let json = await res.json();
-						if (json.result === "success") fetchContent();
+						if (json.result === "success") fetchContents();
 						else alert(json.message);
 						content.value = null;
 					});
 					
+					checkContents();
+					function checkContents() {
+						fetch(
+							"http://localhost:3000/poll/content/?ticketId=" + ticketId,
+							{
+								credentials: "include",
+								method: "GET",
+								headers: {
+									"Content-Type": "application/json",
+								},
+							}
+						)
+							.then(res => res.json())
+							.then(json => {
+								if (json.result === "success") fetchContents();
+								checkContents();
+							});
+					}
 					
 					window.dispatchEvent(new Event("show"));
 				}
