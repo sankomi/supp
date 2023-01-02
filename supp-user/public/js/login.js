@@ -30,6 +30,7 @@
 		}}));
 	} else {
 		document.querySelector("#logout")?.remove();
+		document.querySelector("#change")?.remove();
 		document.querySelector("#home")?.remove();
 		window.dispatchEvent(new CustomEvent("login", {detail: {
 			login: false,

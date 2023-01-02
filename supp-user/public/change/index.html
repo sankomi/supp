@@ -4,7 +4,7 @@
 		<meta charset="UTF-8">
 		<meta name="robots" content="noindex">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<title>login - supp user</title>
+		<title>create - supp user</title>
 		<link rel="stylesheet" href="/css/style.css">
 	</head>
 	<body>
@@ -29,21 +29,20 @@
 			
 			<main class="main">
 				<div class="main__inner max-width-container">
-					<h1>login</h1>
-					<form id="login-form">
+					<h1>change</h1>
+					<form id="change-form">
 						<p>
-							<label for="username">username</label>
-							<input type="text" id="username" name="username">
+							<label for="old-password">old password</label>
+							<input type="password" id="old-password" name="old-password">
 						</p>
 						<p>
-							<label for="password">password</label>
-							<input type="password" id="password" name="password">
+							<label for="new-password">new password</label>
+							<input type="password" id="new-password" name="new-password">
 						</p>
 						<p>
-							<input type="submit" value="login">
+							<input type="submit" value="change">
 						</p>
 					</form>
-					<p>or <a href="/create/">create user</a></p>
 				</div>
 			</main>
 			
@@ -59,25 +58,25 @@
 				window.addEventListener("login", onLogin);
 				async function onLogin(event) {
 					window.removeEventListener("login", onLogin);
-					if (event.detail.login) {
-						window.location.href = "/";
+					if (!event.detail.login) {
+						window.location.href = "/login/";
 						return;
 					}
 					
-					document.querySelector("#login-form").addEventListener("submit", async event => {
+					document.querySelector("#change-form").addEventListener("submit", async event => {
 						event.preventDefault();
 						let res = await fetch(
-							"http://localhost:3000/user/login/",
+							"http://localhost:3000/user/password/",
 							{
 								credentials: "include",
-								method: "POST",
+								method: "PUT",
 								headers: {
 									"Accept": "application/json",
 									"Content-Type": "application/json",
 								},
 								body: JSON.stringify({
-									username: document.querySelector("#username").value,
-									password: document.querySelector("#password").value,
+									oldPassword: document.querySelector("#old-password").value,
+									newPassword: document.querySelector("#new-password").value,
 								}),
 							}
 						);
