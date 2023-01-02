@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.CrossOrigin;
 
 @RestController
-@CrossOrigin(origins = {"http://localhost"}, allowCredentials = "true")
+@CrossOrigin(origins = {"http://localhost:3001"}, allowCredentials = "true")
 @RequestMapping(path = "/ticket/", produces = "application/json")	
 public class TicketController {
 	

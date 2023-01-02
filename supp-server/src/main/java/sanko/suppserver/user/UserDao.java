@@ -10,6 +10,7 @@ import sanko.suppserver.util.Returner;
 public interface UserDao {
 	
 	public int createLogin(Returner returner, String username, String password);
+	public int changePassword(int userId, String password);
 	public Map<String, Object> getUser(String username);
 	public Map<String, Object>[] listUsers();
 	public Integer checkSupport(int userId);

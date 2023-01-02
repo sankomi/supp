@@ -103,6 +103,38 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
+	public String changePassword(Map<String, Object> map, HttpServletRequest request) {
+		String username = (String) request.getSession().getAttribute("username");
+		Integer userId = (Integer) request.getSession().getAttribute("userId");
+		if (userId == null || userId == 0) {
+			return "{\"result\": \"fail\", \"message\": \"not logged in\"}";
+		}
+
+		String oldPassword = (String) map.get("oldPassword");
+		String newPassword = (String) map.get("newPassword");
+		if (oldPassword == null || oldPassword.isEmpty() || newPassword == null || newPassword.isEmpty()) return "{\"result\": \"fail\", \"message\": \"no password\"}";
+
+		Map<String, Object> user = userDao.getUser(username);
+		if (user == null) return "{\"result\": \"fail\", \"message\": \"user does not exist\"}";
+	
+		Pbkdf2PasswordEncoder encoder = new Pbkdf2PasswordEncoder("muchsecret", 1000, 256);
+		String encodedOldPassword = (String) user.get("password");
+		boolean check = encoder.matches(oldPassword, encodedOldPassword);
+		if (check) {
+			String encodedNewPassword = encoder.encode(newPassword);
+			int changed = userDao.changePassword(userId, encodedNewPassword);
+			
+			if (changed == 0) {
+				return "{\"result\": \"fail\", \"message\": \"error\"}";
+			} else {
+				return "{\"result\": \"success\"}";
+			}
+		} else {
+			return "{\"result\": \"fail\", \"message\": \"incorrect password\"}";
+		}
+	}
+
+	@Override
 	public String logout(HttpServletRequest request) {
 		request.getSession().removeAttribute("username");
 		request.getSession().removeAttribute("userId");
