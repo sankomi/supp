@@ -29,7 +29,9 @@
 			<main class="main">
 				<div class="main__inner max-width-container">
 					<h1>supp user</h1>
-					<p><a href="/new/" class="button">new ticket</a></p>
+					<p>
+						<a href="/new/" class="button">new ticket</a>
+						<a href="" class="button" id="notification">notification permission</p>
 					<h2>tickets</h2>
 					<div class="tickets" id="tickets"></div>
 				</div>
@@ -44,6 +46,19 @@
 		<script src="/js/login.js"></script>
 		<script>
 			{
+				const notification = document.querySelector("#notification");
+				if (Notification.permission === "granted") {
+					notification.remove();
+				} else {
+					notification.addEventListener("click", event => {
+						event.preventDefault();
+						Notification.requestPermission()
+							.then(perm => {
+								if (perm === "granted") notification.remove();
+							});
+					});
+				}
+			
 				window.addEventListener("login", onLogin);
 				async function onLogin(event) {
 					window.removeEventListener("login", onLogin);
@@ -53,6 +68,7 @@
 					}
 					
 					let support = event.detail.support;
+					if (!support) notification.remove();
 					
 					fetchTickets();
 					function fetchTickets() {
@@ -104,6 +120,15 @@
 							.then(json => {
 								if (json.result === "success") fetchTickets();
 								checkTickets();
+								
+								if (support) {
+									if (Notification.permission === "granted") {
+										let notification = new Notification("supp", {
+											body: "notification!",
+										});
+										setTimeout(() => notification.close(), 5000);
+									}
+								}
 							});
 					}
 					
