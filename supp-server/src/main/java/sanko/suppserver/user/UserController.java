@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.CrossOrigin;
 
 @RestController
-@CrossOrigin(origins = {"http://localhost"}, allowCredentials = "true")
+@CrossOrigin(origins = {"http://localhost:3001"}, allowCredentials = "true")
 @RequestMapping(path = "/user/", produces = "application/json")	
 public class UserController {
 	
@@ -39,6 +39,11 @@ public class UserController {
 	@GetMapping("/check/")
 	public String checkLogin(HttpServletRequest request) {
 		return userService.checkLogin(request);
+	}
+
+	@PutMapping("/password/")
+	public String changePassword(@RequestBody Map<String, Object> map, HttpServletRequest request) {
+		return userService.changePassword(map, request);
 	}
 	
 	@DeleteMapping("/logout/")

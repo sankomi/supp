@@ -9,6 +9,10 @@
 		VALUES (#{username}, #{password})
 	</insert>
 	
+	<update id="changePassword">
+		UPDATE  users SET password = #{password} WHERE id = #{userId} 
+	</update>
+
 	<select id="getUser" resultType="hashmap">
 		SELECT id, password, support FROM users WHERE username = #{username} LIMIT 1
 	</select>

@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.request.async.DeferredResult;
 
 @RestController
-@CrossOrigin(origins = {"http://localhost"}, allowCredentials = "true")
+@CrossOrigin(origins = {"http://localhost:3001"}, allowCredentials = "true")
 @RequestMapping(path = "/poll/", produces = "application/json")	
 public class PollController {
 	
